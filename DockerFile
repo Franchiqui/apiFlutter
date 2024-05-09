@@ -1,0 +1,15 @@
+# Use NIXPACKS as the builder
+FROM NIXPACKS
+
+# Clonar el repositorio desde GitHub
+RUN gcr.io/cloud-builders/git clone https://github.com/FranchiquiJ/APIprincipal.git
+
+# Instalar las dependencias y ejecutar la aplicación
+RUN python -c "cd APIprincipal && python -m venv opt-env && source opt-env/bin/activate && pip install -r requirements.txt && gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 -w 4 main:app"
+
+# Comando de inicio
+CMD ["hypercorn", "main:app", "--bind", "[::]:$PORT"]
+
+# Variables de entorno
+ENV PYTHON_VERSION=3.9.0
+ENV NUMPY_VERSION=1.26.5
